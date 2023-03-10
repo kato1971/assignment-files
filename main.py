@@ -3,19 +3,16 @@ __human_name__ = "files"
 
 import os
 import zipfile
+import shutil
 
 parent_dir = os.path.abspath("files")
 dir = "cache"
 path = os.path.join(parent_dir, dir)
 
 def clean_cache():
-    if not os.path.exists(path):
-        os.mkdir(path)
-    else:
-        for file in os.listdir(path):
-            filelist = os.path.join(path, file)
-            if os.path.isfile(filelist):
-                os.remove(filelist)
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
 
 def cache_zip(zip_path_file: str, dir_path: str):
     zip_path_file = os.path.join(parent_dir,"data.zip")
@@ -33,13 +30,11 @@ def cached_files():
 
 def find_password(list_full_path):
     for x in list_full_path:
-        file = open(x, "r")
-        text = file.read()
-        if "password" in text:
-            list_full_path = text.split("\n")
-            for i in list_full_path:
-                if "password" in i:
-                    print(i)
-                    return i[i.find(" ")+1:]
-        file.close()
-        
+        with open(x, "r") as file:
+            text = file.read()
+            if "password" in text:
+                list_full_path = text.split("\n")
+                for i in list_full_path:
+                    if "password" in i:
+                        print(i)
+                        return i[i.find(" ")+1:]
